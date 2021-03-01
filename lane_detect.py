@@ -24,7 +24,7 @@ def process_image(image):
     equ = cv2.equalizeHist(gray)
 
     # step 2. gaussian blue (if needed,)
-    blur = gaussian_blur(equ, 9)
+    blur = gaussian_blur(equ, 7)
 
     # step 3. Canny(img, low_threshold, high_threshold)
     canny_img=canny(blur, 50, 100)
@@ -60,7 +60,7 @@ for img in images:
     idx+=1
 
 #plt.show()
-"""
+
 white_output = 'test_videos_output/solidWhiteRight.mp4'
 ## To speed up the testing process you may want to try your pipeline on a shorter subclip of the video
 ## To do so add .subclip(start_second,end_second) to the end of the line below
@@ -70,7 +70,6 @@ white_output = 'test_videos_output/solidWhiteRight.mp4'
 clip1 = VideoFileClip("test_videos/solidWhiteRight.mp4")
 white_clip = clip1.fl_image(process_image) #NOTE: this function expects color images!!
 white_clip.write_videofile(white_output, audio=False)
-
 
 yellow_output = 'test_videos_output/solidYellowLeft.mp4'
 ## To speed up the testing process you may want to try your pipeline on a shorter subclip of the video
@@ -83,9 +82,6 @@ yellow_clip = clip2.fl_image(process_image)
 yellow_clip.write_videofile(yellow_output, audio=False)
 
 
-"""
-
-
 challenge_output = 'test_videos_output/challenge.mp4'
 ## To speed up the testing process you may want to try your pipeline on a shorter subclip of the video
 ## To do so add .subclip(start_second,end_second) to the end of the line below
@@ -95,3 +91,4 @@ challenge_output = 'test_videos_output/challenge.mp4'
 clip3 = VideoFileClip('test_videos/challenge.mp4')
 challenge_clip = clip3.fl_image(process_image)
 challenge_clip.write_videofile(challenge_output, audio=False)
+

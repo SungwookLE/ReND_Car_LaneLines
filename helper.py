@@ -48,7 +48,7 @@ def region_of_interest(img, vertices):
     return masked_image
 
 
-def draw_lines(img, lines, color=[255, 0, 0], thickness=2):
+def draw_lines(img, lines, color=[255, 0, 0], thickness=5):
     """
     NOTE: this is the function you might want to use as a starting point once you want to 
     average/extrapolate the line segments you detect to map out the full
@@ -65,9 +65,41 @@ def draw_lines(img, lines, color=[255, 0, 0], thickness=2):
     If you want to make the lines semi-transparent, think about combining
     this function with the weighted_img() function below
     """
+
+    x_len = img.shape[1]
+    y_len = img.shape[0]
+
+    left  =[]
+    right =[]
+
     for line in lines:
         for x1,y1,x2,y2 in line:
-            cv2.line(img, (x1, y1), (x2, y2), color, thickness)
+            k = ((y2-y1)/(x2-x1))
+
+            if ((k< -0.5) and (k >-15)):
+                left.append([k,x1,y1,x2,y2])
+            elif ((k > 0.5)  and ( k < 15)):
+                right.append([k,x1,y1,x2,y2])
+
+    if len(left)>0 :
+            left = np.array(left)
+            x_left = int(np.mean(left[:,1]))
+            y_left = int(np.mean(left[:,2]))
+            k_left = np.mean(left[:,0])
+            b_left = y_left -k_left * x_left
+
+            if (abs(k_left) > 0.1):
+                cv2.line(img, (int(1/k_left*(y_len-b_left)) , y_len), (int( 1/k_left*(y_len//2+y_len//4-b_left)) ,y_len//2+y_len//4), color, thickness)
+
+    if len(right)>0 :
+            right = np.array(right)
+            x_right = int(np.mean(right[:,1]))
+            y_right = int(np.mean(right[:,2]))
+            k_right= np.mean(right[:,0])
+            b_right = y_right - k_right*x_right
+
+            if (abs(k_right)>0.1):
+                cv2.line(img, (int(1/k_right*(y_len-b_right)) , y_len), (int( 1/k_right*(y_len//2+y_len//4-b_right)) ,y_len//2+y_len//4), color, thickness)
 
 def hough_lines(img, rho, theta, threshold, min_line_len, max_line_gap):
     """
