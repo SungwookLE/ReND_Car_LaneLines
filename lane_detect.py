@@ -9,7 +9,7 @@ import os
 from moviepy.editor import VideoFileClip
 from IPython.display import HTML
 
-def process_image(image):
+def process_image(image, mode='off'):
     x_len = image.shape[1]
     y_len = image.shape[0]
 
@@ -40,62 +40,53 @@ def process_image(image):
     # step 6. visualizaing with addWeighted
     res=weighted_img(hough_img, image)
 
-    #res= hough_img
-    return res
+    if mode == 'off':
+        return res, roi
+    elif mode == 'real':
+        return res
+    else:
+        return res,roi
 
-""" OFFLINE TEST 
+""" OFFLINE TEST """
 images = os.listdir("test_images/")
 fig , ax = plt.subplots(2,len(images)//2)
 fig.suptitle('Lane Detect', fontsize=10)
 
-#fig2 , ax2 = plt.subplots(2,len(images)//2)
-#fig2.suptitle('ROI', fontsize=10)
+fig2 , ax2 = plt.subplots(2,len(images)//2)
+fig2.suptitle('ROI', fontsize=10)
 
 idx =0
 for img in images:
     #reading in an image
     pick_img = mpimg.imread("test_images/"+img)
     print('This image is:', type(pick_img), 'with dimensions:', pick_img.shape)
-    test=process_image(pick_img)
+    test,roi=process_image(pick_img,'off')
 
-    #ax2[idx%2,idx//2].imshow(roi, cmap='gray')
-    #ax[idx%2,idx//2].imshow(test)
+    ax[idx%2,idx//2].imshow(test)
+    ax2[idx%2,idx//2].imshow(roi, cmap='gray')
     idx+=1
 
 fig.tight_layout()
-#fig2.tight_layout()
+fig2.tight_layout()
 
 fig.savefig("./test_images_output/LaneDetect.png")
-#fig2.savefig("./test_images_output/ROI.png")
+fig2.savefig("./test_images_output/ROI.png")
 plt.show()
 
-
+""" VIDEO SAVE
 white_output = 'test_videos_output/solidWhiteRight.mp4'
-## To speed up the testing process you may want to try your pipeline on a shorter subclip of the video
-## To do so add .subclip(start_second,end_second) to the end of the line below
-## Where start_second and end_second are integer values representing the start and end of the subclip
-## You may also uncomment the following line for a subclip of the first 5 seconds
 ##clip1 = VideoFileClip("test_videos/solidWhiteRight.mp4").subclip(0,5)
 clip1 = VideoFileClip("test_videos/solidWhiteRight.mp4")
 white_clip = clip1.fl_image(process_image) #NOTE: this function expects color images!!
 white_clip.write_videofile(white_output, audio=False)
 
 yellow_output = 'test_videos_output/solidYellowLeft.mp4'
-## To speed up the testing process you may want to try your pipeline on a shorter subclip of the video
-## To do so add .subclip(start_second,end_second) to the end of the line below
-## Where start_second and end_second are integer values representing the start and end of the subclip
-## You may also uncomment the following line for a subclip of the first 5 seconds
 ##clip2 = VideoFileClip('test_videos/solidYellowLeft.mp4').subclip(0,5)
 clip2 = VideoFileClip('test_videos/solidYellowLeft.mp4')
 yellow_clip = clip2.fl_image(process_image)
 yellow_clip.write_videofile(yellow_output, audio=False)
 
-
 challenge_output = 'test_videos_output/challenge.mp4'
-## To speed up the testing process you may want to try your pipeline on a shorter subclip of the video
-## To do so add .subclip(start_second,end_second) to the end of the line below
-## Where start_second and end_second are integer values representing the start and end of the subclip
-## You may also uncomment the following line for a subclip of the first 5 seconds
 ##clip3 = VideoFileClip('test_videos/challenge.mp4').subclip(0,5)
 clip3 = VideoFileClip('test_videos/challenge.mp4')
 challenge_clip = clip3.fl_image(process_image)
