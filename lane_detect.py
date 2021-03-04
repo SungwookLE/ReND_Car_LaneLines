@@ -1,4 +1,3 @@
-
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import numpy as np
@@ -9,7 +8,6 @@ import os
 # Import everything needed to edit/save/watch video clips
 from moviepy.editor import VideoFileClip
 from IPython.display import HTML
-
 
 def process_image(image):
     x_len = image.shape[1]
@@ -31,7 +29,7 @@ def process_image(image):
 
     # step 4. region_of_interest
     x_off = 150
-    trapezoidal_x_off = 250
+    trapezoidal_x_off = 220
     y_off = 320
     region = np.array([[x_off+trapezoidal_x_off, y_off], [x_len-x_off-trapezoidal_x_off,y_off], [x_len-x_off, y_len] , [x_off,y_len]], np.int32)
     roi = region_of_interest(canny_img, region)
@@ -45,21 +43,32 @@ def process_image(image):
     #res= hough_img
     return res
 
-
-
+""" OFFLINE TEST 
 images = os.listdir("test_images/")
-fig , ax = plt.subplots(len(images),1)
+fig , ax = plt.subplots(2,len(images)//2)
+fig.suptitle('Lane Detect', fontsize=10)
+
+#fig2 , ax2 = plt.subplots(2,len(images)//2)
+#fig2.suptitle('ROI', fontsize=10)
+
 idx =0
 for img in images:
     #reading in an image
     pick_img = mpimg.imread("test_images/"+img)
     print('This image is:', type(pick_img), 'with dimensions:', pick_img.shape)
     test=process_image(pick_img)
-    
-    ax[idx].imshow(test, cmap='gray')
+
+    #ax2[idx%2,idx//2].imshow(roi, cmap='gray')
+    #ax[idx%2,idx//2].imshow(test)
     idx+=1
 
-#plt.show()
+fig.tight_layout()
+#fig2.tight_layout()
+
+fig.savefig("./test_images_output/LaneDetect.png")
+#fig2.savefig("./test_images_output/ROI.png")
+plt.show()
+
 
 white_output = 'test_videos_output/solidWhiteRight.mp4'
 ## To speed up the testing process you may want to try your pipeline on a shorter subclip of the video
@@ -91,4 +100,4 @@ challenge_output = 'test_videos_output/challenge.mp4'
 clip3 = VideoFileClip('test_videos/challenge.mp4')
 challenge_clip = clip3.fl_image(process_image)
 challenge_clip.write_videofile(challenge_output, audio=False)
-
+"""
